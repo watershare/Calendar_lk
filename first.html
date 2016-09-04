@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Calendar</title>
+<link rel="stylesheet" href="calend.css"></links>
+<style>
+      div.calendar {
+        max-width: 240px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      div.calendar table {
+        width: 100%;
+      }
+</style>
+</head>
+
+<body>
+<input type="text" id="calendarDate" runat="server"  />
+<img src="../../image/button_dot.gif" id="triggerClick" /> 
+</body>
+<script src="prototype.js"></script>
+<script src="calendarprotot.js"></script>
+<script language="javascript">
+	function calendarstart() {			
+		Calendar.setup({dateField:'calendarDate',triggerElement:'triggerClick'})	
+}
+function formatDate(sDate) {
+	var sScrap = "";
+	var dScrap = new Date(sDate);
+	if (dScrap == "NaN") return sScrap;
+	
+	/*iDay = dScrap.getDate();
+	iMon = dScrap.getMonth();
+	iYea = dScrap.getFullYear();	
+	sScrap = (iMon + 1)+"/"+iDay+"/"+iYea ;	*/
+	iDay = dScrap.getDate()+100+"";
+	iDay=iDay.substring(1);
+	iMon = dScrap.getMonth()+1+100+"";
+	iMon=iMon.substring(1);
+	iYea = dScrap.getFullYear();	
+	sScrap = iYea+"/"+(iMon)+"/"+iDay;
+	return sScrap;
+}
+Event.observe(window,'load',function(){calendarstart()});
+</script>
+</html>
