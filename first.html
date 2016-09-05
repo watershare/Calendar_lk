@@ -17,14 +17,17 @@
 </head>
 
 <body>
-<input type="text" id="calendarDate" runat="server"  />
+<input type="text" id="calendarDate" placeholder="sdfds" runat="server"  />
 <img src="../../image/button_dot.gif" id="triggerClick" /> 
+<input type="text" id="Text1" runat="server"  />
+<img src="../../image/button_dot.gif" id="Img1" /> 
 </body>
 <script src="prototype.js"></script>
 <script src="calendarprotot.js"></script>
 <script language="javascript">
-	function calendarstart() {			
-		Calendar.setup({dateField:'calendarDate',triggerElement:'triggerClick'})	
+	function calendarstart() {
+	    Calendar.setup({ dateField: 'calendarDate', triggerElement: 'triggerClick' })
+	    Calendar.setup({ dateField: 'Text1', triggerElement: 'Img1' })
 }
 function formatDate(sDate) {
 	var sScrap = "";
@@ -46,3 +49,4 @@ function formatDate(sDate) {
 Event.observe(window,'load',function(){calendarstart()});
 </script>
 </html>
+
