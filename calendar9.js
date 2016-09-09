@@ -282,25 +282,26 @@ Calendar.prototype = {
 	},
 	selmyChange:function(event){
 		var datenow = new Date()
-		//seltmonth.value = $('selMonth').value
-		//seltyear.value = $('selMonthYear').value
-		datenow.setFullYear($('selMonthYear').value)
-		datenow.setMonth($('selMonth').value)
+		datenow.setFullYear(seltyear.value)
+		datenow.setMonth(seltmonth.value)
 	    this.update(datenow)
+		//this.dateField.value = datenow.print(this.dateFormat)
+		//var s = datenow.print(this.dateFormat)
+		datenow.setDateOnly(datenow)
+		this.callSelectHandler()
 	},
 	displayMonthYear:function(dDate){
 		var iYear = dDate.getFullYear()
 		var iMonth = dDate.getMonth()
-		var selm = $('selMonth')
-		selm.value = iMonth
-		selm.selectedIndex = dDate.getMonth()
+			//var selm = $('selMonth')
+		seltmonth.value = iMonth
+		seltmonth.selectedIndex = dDate.getMonth()
 		//seltmonth.value = dDate.getMonth()
 		//seltmonth.selectedIndex = dDate.getMonth()
 
-		var y = parseInt(iYear) - parseInt($('selMonthYear').options[0].value)
-		var selec = $('selMonthYear')
+		var y = parseInt(iYear) - parseInt(seltyear.options[0].value)
 		var flag  = true
-		if(dDate.getFullYear() < (parseInt(selec.options[0].value))){
+		if(dDate.getFullYear() < (parseInt(seltyear.options[0].value))){
 				objnewopt = document.createElement('option')
 				objnewopt.text = parseInt(iYear)
 				objnewopt.value = parseInt(iYear)
@@ -308,16 +309,16 @@ Calendar.prototype = {
 				objnewopt.selected = true
 				flag = false
 		}
-		if(dDate.getFullYear() > (parseInt(selec.options[19].value)+1)){
+		if(dDate.getFullYear() > (parseInt(seltyear.options[19].value)+1)){
 				objnewopt = document.createElement('option')
 				objnewopt.text = parseInt(iYear)
 				objnewopt.value = parseInt(iYear)
-				selec.options.add(objnewopt,selec.length+1)
+				selec.options.add(objnewopt,seltyear.length+1)
 				objnewopt.selected = true
 				flag = false
 		}
 		if(flag){
-			selec.value = iYear
+			seltyear.value = iYear
 			//seltyear.value = iYear
 			//seltyear.selectedIndex = parseInt(y)
 		}
@@ -342,7 +343,7 @@ Calendar.prototype = {
       this._drawButtonCell(row, '&#x2039;', 1, Calendar.NAV_PREVIOUS_MONTH)
 	  var cell = new Element('td',{colspan:5})
 	  var divmonth = new Element('div',{style:'float:left;width:38%'})
-	  var seltmonth = new Element('select',{style:'text-align:left',id:'selMonth'})
+	  seltmonth = new Element('select',{style:'text-align:left',id:'selMonth'})
 	  seltmonth.addClassName('DateSelect')
 	  for(var i = 0;i<12;i++){
 		  var optsel = new Element('option')
@@ -359,7 +360,7 @@ Calendar.prototype = {
 	  var divyear = new Element('div',{style:'float:right;width:62%'})
 	  var divselover = new Element('div',{style:'overflow:hidden;width:50px;border-right: 1px solid #111;'})
 	  divyear.addClassName('selyearstyle')
-	  var seltyear = new Element('select',{style:'text-align:left;float:left;width:70px',id:'selMonthYear'})
+	  seltyear = new Element('select',{style:'text-align:left;float:left;width:70px',id:'selMonthYear'})
 	  seltyear.addClassName('DateSelect')
 	  var iScrap = this.date.getFullYear()-10
 	  for(i=0;i<20;i++){
