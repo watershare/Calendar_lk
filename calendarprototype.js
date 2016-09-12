@@ -15,7 +15,7 @@ Calendar.NAV_NEXT_YEAR = 2
 
 Calendar._checkCalendar = function(event){
 	if(!window._popupCalendar) return false
-	if(Element.descendantOf(Event.element(event),window._popupCalendar.container))return
+	if(Element.descendantOf(Event.element(event),$('calendar')))return
 	window._popupCalendar.callCloseHandler()
 	return Event.stop(event)
 }
@@ -144,8 +144,9 @@ Calendar.setup = function(params){
 	param_default('closeHandler',null)
 	
 	var calendar
+	var triggerele = $(params.triggerElement)
 	
-	$(params.triggerElement).observe('click',triggerElementhandle)
+	triggerele.observe('click',triggerElementhandle)
 	function triggerElementhandle(){
 		if(!window._popupCalendar){
 		  calendar = new Calendar()
@@ -177,6 +178,7 @@ Calendar.setup = function(params){
 				  }
 				}else{
 			  calendar.shouldClose = false
+			  calendar.setDateField(params.dateField)
 			  calendar.parseDate(calendar.dateField.value)
 			  Date.parseDate(calendar.dateField.value,calendar.dateFormat)
 			  calendar.showAtElement(calendar.dateField)
@@ -213,6 +215,7 @@ Calendar.prototype = {
 	shouldClose:false,
 	isPopup:true,
 	dateField:null,
+	dateFieldelement:null,
 	
   //----------------------------------------------------------------------------
   // Initialize
@@ -281,27 +284,26 @@ Calendar.prototype = {
 	 this.displayMonthYear(datatt)
 	},
 	selmyChange:function(event){
-		var datenow = new Date()
-		datenow.setFullYear(seltyear.value)
-		datenow.setMonth(seltmonth.value)
+		year = $('selMonthYear').value
+	    month = $('selMonth').value
+		var datenow = new Date(year,month,1,0,0,0)
+		//var datenow = new Date(yeardate,monthdate,1,0,0,0)
 	    this.update(datenow)
-		//this.dateField.value = datenow.print(this.dateFormat)
-		//var s = datenow.print(this.dateFormat)
-		datenow.setDateOnly(datenow)
+		//datenow.setDateOnly(datenow)
 		this.callSelectHandler()
 	},
 	displayMonthYear:function(dDate){
 		var iYear = dDate.getFullYear()
 		var iMonth = dDate.getMonth()
 			//var selm = $('selMonth')
-		seltmonth.value = iMonth
-		seltmonth.selectedIndex = dDate.getMonth()
+		$('selMonth').value = iMonth
+		//seltmonth.selectedIndex = dDate.getMonth()
 		//seltmonth.value = dDate.getMonth()
 		//seltmonth.selectedIndex = dDate.getMonth()
-
-		var y = parseInt(iYear) - parseInt(seltyear.options[0].value)
+		selyear = $('selMonthYear')
+		var y = parseInt(iYear) - parseInt(selyear.options[0].value)
 		var flag  = true
-		if(dDate.getFullYear() < (parseInt(seltyear.options[0].value))){
+		if(dDate.getFullYear() < (parseInt(selyear.options[0].value))){
 				objnewopt = document.createElement('option')
 				objnewopt.text = parseInt(iYear)
 				objnewopt.value = parseInt(iYear)
@@ -309,16 +311,16 @@ Calendar.prototype = {
 				objnewopt.selected = true
 				flag = false
 		}
-		if(dDate.getFullYear() > (parseInt(seltyear.options[19].value)+1)){
+		if(dDate.getFullYear() > (parseInt(selyear.options[19].value)+1)){
 				objnewopt = document.createElement('option')
 				objnewopt.text = parseInt(iYear)
 				objnewopt.value = parseInt(iYear)
-				selec.options.add(objnewopt,seltyear.length+1)
+				selec.options.add(objnewopt,selyear.length+1)
 				objnewopt.selected = true
 				flag = false
 		}
 		if(flag){
-			seltyear.value = iYear
+			$('selMonthYear').value = iYear
 			//seltyear.value = iYear
 			//seltyear.selectedIndex = parseInt(y)
 		}
@@ -328,8 +330,9 @@ Calendar.prototype = {
 	  // Create/Draw the Calendar HTML Elements
   //---------------------------------------------------------------------------- 
     create:function(parent){
+	  if($('calendar')){$('calendar').remove()}
 	  if(!parent){
-			parent = document.getElementsByTagName('body')[0]
+			var parent = document.getElementsByTagName('body')[0]
 			this.isPopup = true  
 		}else{ this.isPopup = false}
 	  if(isNaN(this.date.getTime()))
@@ -343,7 +346,7 @@ Calendar.prototype = {
       this._drawButtonCell(row, '&#x2039;', 1, Calendar.NAV_PREVIOUS_MONTH)
 	  var cell = new Element('td',{colspan:5})
 	  var divmonth = new Element('div',{style:'float:left;width:38%'})
-	  seltmonth = new Element('select',{style:'text-align:left',id:'selMonth'})
+	  var seltmonth = new Element('select',{style:'text-align:left',id:'selMonth'})
 	  seltmonth.addClassName('DateSelect')
 	  for(var i = 0;i<12;i++){
 		  var optsel = new Element('option')
@@ -360,7 +363,7 @@ Calendar.prototype = {
 	  var divyear = new Element('div',{style:'float:right;width:62%'})
 	  var divselover = new Element('div',{style:'overflow:hidden;width:50px;border-right: 1px solid #111;'})
 	  divyear.addClassName('selyearstyle')
-	  seltyear = new Element('select',{style:'text-align:left;float:left;width:70px',id:'selMonthYear'})
+	  var seltyear = new Element('select',{style:'text-align:left;float:left;width:70px',id:'selMonthYear'})
 	  seltyear.addClassName('DateSelect')
 	  var iScrap = this.date.getFullYear()-10
 	  for(i=0;i<20;i++){
@@ -400,7 +403,7 @@ Calendar.prototype = {
 		  }
 		  cell.calendar =this
 	  }
-	  this.container = new Element('div')
+	  this.container = new Element('div',{id:'calendar'})
 	  this.container.addClassName('calendar')
 	  this.container.setStyle({position: 'absolute', display: 'none' })
 	  this.container.addClassName('popup')
@@ -413,9 +416,8 @@ Calendar.prototype = {
 	  seltyear.stopObserving('mousedown',Calendar.handleMouseDownEvent)
 	  seltmonth.observe('change',this.selmyChange.bind(this))
 	  seltyear.observe('change',this.selmyChange.bind(this))
-	  
 	  //this.update(this.date)
-	  this.showAt(100,200)
+	 // this.showAt(100,200)
 	},
 	_drawButtonCell:function(parent,text,colSpan,navAction){
 		var cell = new Element('td')
@@ -458,12 +460,14 @@ Calendar.prototype = {
 		this.dateField =$(field)
 	},
 	show:function(){
-		this.container.show()
+		//this.container.show()
+		$('calendar').show()
 		window._popupCalendar = this
 		Event.observe(document,'mousedown',Calendar._checkCalendar)
 	},
 	showAt:function(x,y){
-		this.container.setStyle({ left: x + 'px', top: y + 'px' })
+		$('calendar').setStyle({ left: x + 'px', top: y + 'px' })
+		//this.container.setStyle({ left: x + 'px', top: y + 'px' })
 		this.show()
 	},
 	showAtElement:function(element){
@@ -475,7 +479,7 @@ Calendar.prototype = {
   //------------------------------------------------------------------------------
     hide:function(){
 	 Event.stopObserving(document,'mousedown',Calendar._checkCalendar)
-	 this.container.hide()
+	 $('calendar').hide()
 	},
 	
 	//
