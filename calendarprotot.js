@@ -148,7 +148,6 @@ Calendar.setup = function(params){
 	
 	triggerele.observe('click',triggerElementhandle)
 	function triggerElementhandle(){
-		if(!window._popupCalendar){
 		  calendar = new Calendar()
 		  calendar.setSelectHandler(params.selectHandler || Calendar.defaultSelectHandler)
 		  calendar.setCloseHandler(params.closeHandler || Calendar.defaultCloseHandler)
@@ -162,29 +161,6 @@ Calendar.setup = function(params){
 			  return calendar
 			  
 		  }
-		}
-		else{
-			  if(!calendar){
-				  calendar = new Calendar()
-				  calendar.setSelectHandler(params.selectHandler || Calendar.defaultSelectHandler)
-		          calendar.setCloseHandler(params.closeHandler || Calendar.defaultCloseHandler)
-				  if(params.dateField){
-					  calendar.setDateField(params.dateField)	
-					  calendar.parseDate(calendar.dateField.innerHTML || calendar.dateField.value)
-					  Date.parseDate(calendar.dateField.value || calendar.dateField.innerHTML,calendar.dateFormat)
-					  calendar.showAtElement(calendar.dateField)
-					  return calendar
-					  
-				  }
-				}else{
-			  calendar.shouldClose = false
-			  calendar.setDateField(params.dateField)
-			  calendar.parseDate(calendar.dateField.value)
-			  Date.parseDate(calendar.dateField.value,calendar.dateFormat)
-			  calendar.showAtElement(calendar.dateField)
-			  return calendar
-			}
-		}
 	}
 	//var calendar = new Calendar()
 	//calendar.setSelectHandler(params.selectHandler || Calendar.defaultSelectHandler)
